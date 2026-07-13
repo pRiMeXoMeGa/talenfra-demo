@@ -1,0 +1,42 @@
+{
+  "roleTitle": "Senior Product Manager",
+  "roleContext": "B2B SaaS company hiring a Senior PM to own a core product area, lead a cross-functional squad, and drive the roadmap. Reports to the Head of Product.",
+  "knockouts": [
+    {
+      "name": "Minimum PM experience",
+      "rule": "At least 4 years in a product management role (Associate PM, PM, Senior PM, or Group PM). Project management, program management, or project coordination alone does NOT count."
+    }
+  ],
+  "criteria": [
+    {
+      "key": "saas",
+      "name": "SaaS background",
+      "weight": 25,
+      "lookFor": "Hands-on B2B SaaS product experience — subscription products, dashboards, APIs, admin tooling, PLG or sales-led motions. Adjacent B2B tech counts partly; pure consumer or non-software counts little."
+    },
+    {
+      "key": "domain",
+      "name": "Domain fit",
+      "weight": 20,
+      "lookFor": "Relevance of their industry/problem space to a core B2B SaaS product area — workflow tools, data products, fintech infra, devtools, HR/recruiting tech, martech. Reward directly transferable domain knowledge."
+    },
+    {
+      "key": "leadership",
+      "name": "Leadership",
+      "weight": 20,
+      "lookFor": "Evidence of leading — owning a roadmap end to end, mentoring or managing PMs, running a cross-functional squad (eng/design/data), and driving decisions, not just executing tickets."
+    },
+    {
+      "key": "communication",
+      "name": "Communication",
+      "weight": 15,
+      "lookFor": "Stakeholder management, writing (PRDs, strategy docs), presenting to leadership, and working across sales/CS/exec. Inferred from scope of stakeholders and any writing/presenting evidence."
+    },
+    {
+      "key": "tenure",
+      "name": "Tenure & stability",
+      "weight": 20,
+      "lookFor": "Reasonable tenure per role (ideally 2+ years), a coherent career story, and no unexplained gaps or rapid job-hopping. Short stints and gaps lower this; steady progression raises it."
+    }
+  ]
+}

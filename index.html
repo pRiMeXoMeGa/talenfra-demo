@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Talenfra — Live Screening Demo</title>
+<style>
+  :root{
+    --bg:#0E0E1C; --panel:#16162B; --panel2:#1C1C36; --line:rgba(255,255,255,.08);
+    --text:#EEEEFF; --muted:#A6A6C8; --subtle:#6E6E90;
+    --teal:#00C2A8; --teal2:#00E0C2; --gold:#E6B23A; --coral:#FF6B6B; --green:#4ADE80;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:radial-gradient(1200px 700px at 80% -10%, #14263A 0%, var(--bg) 55%);
+    color:var(--text); font-family:var(--sans); min-height:100vh;
+    -webkit-font-smoothing:antialiased; padding:32px 20px 60px;
+  }
+  .wrap{max-width:1120px;margin:0 auto}
+  .card{background:linear-gradient(180deg,var(--panel) 0%,#12122486 100%);
+    border:1px solid var(--line); border-radius:20px; box-shadow:0 20px 60px -30px #000;}
+  .hidden{display:none!important}
+  .mono{font-family:var(--mono)}
+
+  /* header */
+  header{display:flex;align-items:center;gap:16px;margin-bottom:26px}
+  .badge{width:52px;height:52px;border-radius:14px;flex:0 0 auto;box-shadow:0 8px 24px -8px #00C2A855}
+  .brand h1{font-size:20px;margin:0;letter-spacing:-.3px}
+  .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+  .live{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--teal2);
+    font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:2px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 #00C2A8aa;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 #00C2A8aa}70%{box-shadow:0 0 0 9px #00C2A800}100%{box-shadow:0 0 0 0 #00C2A800}}
+
+  /* setup */
+  .setup{padding:34px}
+  .eyebrow{color:var(--teal);font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase}
+  .setup h2{font-size:32px;margin:10px 0 6px;letter-spacing:-.5px}
+  .setup .sub{color:var(--muted);font-size:15px;max-width:640px;line-height:1.6}
+  .rubric{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+  .chip{border:1px solid var(--line);background:#ffffff08;border-radius:999px;padding:8px 14px;font-size:13px;color:var(--muted)}
+  .chip b{color:var(--text);font-weight:600}
+  .ko{border-color:#FF6B6B44;color:#ffb4b4;background:#FF6B6B12}
+  .meta{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 28px}
+  .meta .num{font-size:30px;font-family:var(--mono);color:var(--text)}
+  .meta .lbl{font-size:12px;color:var(--subtle);text-transform:uppercase;letter-spacing:1.5px}
+  button.run{border:none;cursor:pointer;color:#04120F;font-weight:700;font-size:15px;padding:15px 30px;border-radius:12px;
+    background:linear-gradient(135deg,var(--teal2),var(--teal));box-shadow:0 14px 34px -12px #00C2A8aa;transition:transform .12s}
+  button.run:hover{transform:translateY(-2px)}
+  button.ghost{background:none;border:1px solid var(--line);color:var(--muted);cursor:pointer;padding:12px 22px;border-radius:12px;font-size:14px}
+
+  /* scoring */
+  .scoring{padding:40px 34px}
+  .prog-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+  .prog-top .count{font-family:var(--mono);font-size:34px}
+  .prog-top .count span{color:var(--subtle);font-size:20px}
+  .prog-top .now{color:var(--muted);font-size:14px;text-align:right}
+  .prog-top .now b{color:var(--teal2)}
+  .bar{height:12px;border-radius:999px;background:#ffffff10;overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .18s}
+  .tallies{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}
+  .tally{padding:18px;border-radius:14px;border:1px solid var(--line);text-align:center;background:#ffffff05}
+  .tally .n{font-family:var(--mono);font-size:30px}
+  .tally .k{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--subtle);margin-top:2px}
+  .stream{display:flex;flex-wrap:wrap;gap:8px;min-height:38px}
+  .flash{border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:12.5px;font-family:var(--mono);
+    display:flex;gap:8px;align-items:center;animation:pop .3s ease}
+  .flash .s{font-weight:700}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* results */
+  .results{padding:30px 30px 8px}
+  .rhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:22px}
+  .rhead h2{font-size:26px;margin:0;letter-spacing:-.4px}
+  .rhead .summary{font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .rhead .summary b{color:var(--text)}
+  .spot{display:grid;grid-template-columns:230px 1fr;gap:24px;align-items:center;
+    padding:22px;border-radius:16px;border:1px solid var(--line);background:#00C2A80a;margin-bottom:22px}
+  .spot .who{font-size:19px;font-weight:600}
+  .spot .role{color:var(--subtle);font-size:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+  .spot .note{color:var(--muted);font-size:14px;line-height:1.6;margin-top:10px}
+  .bars{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+  .brow{display:grid;grid-template-columns:130px 1fr 34px;gap:10px;align-items:center;font-size:12px}
+  .brow .t{color:var(--muted)}
+  .brow .track{height:7px;border-radius:999px;background:#ffffff10;overflow:hidden}
+  .brow .track>i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:999px}
+  .brow .v{font-family:var(--mono);color:var(--text);text-align:right}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  thead th{text-align:left;padding:10px 12px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--subtle);border-bottom:1px solid var(--line)}
+  tbody td{padding:12px;border-bottom:1px solid #ffffff08;vertical-align:top}
+  tbody tr{animation:rowin .35s ease both}
+  @keyframes rowin{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+  .rk{font-family:var(--mono);color:var(--subtle)}
+  .nm{font-weight:600;white-space:nowrap}
+  .sc{font-family:var(--mono);font-size:17px}
+  .sc span{color:var(--subtle);font-size:11px}
+  .tier{font-weight:800;font-family:var(--mono)}
+  .tierA{color:var(--teal)} .tierB{color:var(--gold)} .tierC{color:var(--coral)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .pShortlist{color:var(--teal);background:#00C2A820} .pHold{color:var(--gold);background:#E6B23A20} .pReject{color:var(--coral);background:#FF6B6B18}
+  .note{color:var(--muted);max-width:360px;line-height:1.5}
+  .rf{display:inline-block;margin-top:5px;margin-right:5px;font-size:10.5px;color:#ffb4b4;background:#FF6B6B14;border:1px solid #FF6B6B33;border-radius:6px;padding:2px 7px}
+  .foot{color:var(--subtle);font-size:12px;text-align:center;padding:18px 8px 6px}
+  .actions{display:flex;gap:12px;margin-top:18px;padding:0 2px}
+
+  /* red-flag catch panel */
+  .catch-title{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--coral);font-family:var(--mono);margin:8px 0 12px}
+  .catches{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:10px}
+  .catch{border:1px solid #FF6B6B33;background:#FF6B6B0d;border-radius:14px;padding:14px 16px}
+  .catch .h{font-weight:600;font-size:14.5px}
+  .catch .flag{font-size:11px;color:#ffb4b4;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin:9px 0 6px}
+  .catch .why{color:var(--muted);font-size:12.5px;line-height:1.5;font-style:italic}
+
+  /* expandable rows */
+  tbody tr.row{cursor:pointer}
+  tbody tr.row:hover{background:#ffffff06}
+  .chev{display:inline-block;color:var(--subtle);transition:transform .18s;margin-right:7px}
+  tr.open .chev{transform:rotate(90deg);color:var(--teal2)}
+  tr.detail>td{padding:0}
+  .detailbox{padding:4px 16px 20px 42px;display:grid;grid-template-columns:1fr 1fr;gap:12px 30px;animation:pop .3s ease}
+  .ev{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:start;font-size:12px}
+  .ev .k{color:var(--muted)} .ev .k b{display:block;color:var(--text);font-family:var(--mono);font-size:15px;margin-top:2px}
+  .ev .track{height:6px;border-radius:999px;background:#ffffff10;overflow:hidden;margin-top:4px}
+  .ev .track>i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2))}
+  .ev .q{color:var(--subtle);font-size:11.5px;line-height:1.45;margin-top:5px;font-style:italic}
+
+  /* export + toast */
+  .exportBtn{background:none;border:1px solid var(--teal);color:var(--teal2);cursor:pointer;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600}
+  .exportBtn:hover{background:#00C2A814}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:var(--panel2);
+    border:1px solid var(--teal);color:var(--text);padding:12px 20px;border-radius:12px;font-size:13px;transition:.3s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ROI end card */
+  .roi{margin-top:26px;padding:28px;border-radius:16px;border:1px solid var(--line);
+    background:linear-gradient(135deg,#00C2A814,#12122400);display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
+  .roi .big{font-size:42px;font-family:var(--mono);color:var(--teal2);line-height:1;font-variant-numeric:tabular-nums}
+  .roi .big small{display:block;font-size:13px;color:var(--muted);font-family:var(--sans);margin-top:10px;letter-spacing:0;line-height:1.5}
+  .roi .next{border-left:1px solid var(--line);padding-left:26px}
+  .roi .next .lbl{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--subtle);font-family:var(--mono)}
+  .roi .next h3{margin:9px 0 6px;font-size:19px}
+  .roi .next p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55}
+
+  @media(max-width:760px){.spot{grid-template-columns:1fr}.note{max-width:none}.setup h2{font-size:26px}
+    .detailbox{grid-template-columns:1fr}.roi{grid-template-columns:1fr}
+    .roi .next{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="badge" alt="Talenfra" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><defs><linearGradient id='t' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300E0C2'/><stop offset='100%25' stop-color='%23009A87'/></linearGradient></defs><rect width='280' height='280' rx='64' fill='%231A1A2E'/><path d='M 96 70 L 70 70 Q 58 70 58 82 L 58 198 Q 58 210 70 210 L 96 210' fill='none' stroke='url(%23t)' stroke-width='18' stroke-linecap='round'/><circle cx='150' cy='92' r='13' fill='%2350506A'/><circle cx='150' cy='140' r='13' fill='%238888B0'/><circle cx='150' cy='188' r='13' fill='%2350506A'/><circle cx='224' cy='140' r='17' fill='url(%23t)'/></svg>" />
+    <div class="brand">
+      <h1>Talenfra</h1>
+      <p>AI CV Screening — live run</p>
+    </div>
+    <div class="live"><span class="dot"></span> <span id="liveLabel">Ready</span></div>
+  </header>
+
+  <!-- SETUP -->
+  <section class="card setup" id="setup">
+    <div class="eyebrow">The role</div>
+    <h2 id="roleTitle">Senior Product Manager</h2>
+    <p class="sub" id="roleContext"></p>
+    <div class="meta">
+      <div><div class="num" id="totalNum">47</div><div class="lbl">Applications</div></div>
+      <div><div class="num" id="critNum">5</div><div class="lbl">Scored criteria</div></div>
+      <div><div class="num">1</div><div class="lbl">Knockout rule</div></div>
+    </div>
+    <div class="rubric" id="rubricChips"></div>
+    <button class="run" id="runBtn">▶ Run screening</button>
+  </section>
+
+  <!-- SCORING -->
+  <section class="card scoring hidden" id="scoringView">
+    <div class="prog-top">
+      <div class="count"><span id="doneN">0</span>/<span id="totN">47</span></div>
+      <div class="now">Scoring <b id="nowName">…</b></div>
+    </div>
+    <div class="bar"><i id="progBar"></i></div>
+    <div class="tallies">
+      <div class="tally"><div class="n" style="color:var(--teal)" id="tShort">0</div><div class="k">Shortlist</div></div>
+      <div class="tally"><div class="n" style="color:var(--gold)" id="tHold">0</div><div class="k">Hold</div></div>
+      <div class="tally"><div class="n" style="color:var(--coral)" id="tRej">0</div><div class="k">Reject</div></div>
+    </div>
+    <div class="stream" id="stream"></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card results hidden" id="resultsView">
+    <div class="rhead">
+      <h2>Ranked shortlist</h2>
+      <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <div class="summary" id="summary"></div>
+        <button class="exportBtn" id="exportBtn">⬇ Export shortlist</button>
+      </div>
+    </div>
+    <div class="roi" id="roi"></div>
+    <div class="spot" id="spot"></div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>#</th><th>Candidate</th><th>Score</th><th>Tier</th><th>Action</th><th>AI note</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="foot">Click any candidate to see the evidence behind each score. Synthetic data; scoring logic and output format are identical to client builds.</p>
+    <p class="catch-title" id="catchTitle" style="display:none">⚑ What it caught — flagged, not buried</p>
+    <div class="catches" id="catches"></div>
+    <div class="actions"><button class="ghost" id="replayBtn">↺ Replay</button></div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="results.js"></script>
+<script>
+  const R = window.__TALENFRA_RESULTS__
+  const $ = (id) => document.getElementById(id)
+  const CRIT = [['saas','SaaS background'],['domain','Domain fit'],['leadership','Leadership'],['communication','Communication'],['tenure','Tenure & stability']]
+  const STEP = 300 // ms per candidate during the scoring animation
+
+  // ---- setup screen ----
+  $('roleTitle').textContent = R.role
+  $('totalNum').textContent = R.total
+  $('totN').textContent = R.total
+  const ctxs = {
+    'Senior Product Manager':'A B2B SaaS company hiring a Senior PM to own a core product area, lead a cross-functional squad, and drive the roadmap.'
+  }
+  $('roleContext').textContent = ctxs[R.role] || ''
+  $('rubricChips').innerHTML =
+    CRIT.map(([,n]) => `<span class="chip"><b>${n}</b></span>`).join('') +
+    `<span class="chip ko">Knockout · min 4 yrs PM</span>`
+
+  const fmtTime = (ms) => {
+    if (!ms || ms < 4000) return null
+    const s = Math.round(ms/1000); return `${Math.floor(s/60)}m ${String(s%60).padStart(2,'0')}s`
+  }
+
+  // ---- scoring animation ----
+  function run() {
+    $('setup').classList.add('hidden'); $('resultsView').classList.add('hidden')
+    $('scoringView').classList.remove('hidden'); $('liveLabel').textContent = 'Screening'
+    const arrival = [...R.candidates].sort((a,b)=>a.id.localeCompare(b.id))
+    const stream = $('stream'); stream.innerHTML = ''
+    let done=0, sh=0, ho=0, re=0, i=0
+    const timer = setInterval(() => {
+      const c = arrival[i++]
+      done++
+      $('doneN').textContent = done
+      $('progBar').style.width = (done/arrival.length*100)+'%'
+      $('nowName').textContent = c.name
+      if (c.action==='Shortlist'){sh++;$('tShort').textContent=sh}
+      else if (c.action==='Hold'){ho++;$('tHold').textContent=ho}
+      else {re++;$('tRej').textContent=re}
+      const col = c.action==='Shortlist'?'var(--teal)':c.action==='Hold'?'var(--gold)':'var(--coral)'
+      const el = document.createElement('div')
+      el.className='flash'; el.innerHTML = `${c.name.split(' ')[0]} <span class="s" style="color:${col}">${c.overallScore}</span>`
+      stream.prepend(el)
+      while (stream.children.length>7) stream.lastChild.remove()
+      if (i>=arrival.length){ clearInterval(timer); setTimeout(showResults, 650) }
+    }, STEP)
+  }
+
+  // ---- results ----
+  function radar(c){
+    const size=170, cx=size/2, cy=size/2, rmax=size/2-18, N=CRIT.length
+    const pt=(idx,r)=>{const a=-Math.PI/2+idx*2*Math.PI/N;return [cx+r*Math.cos(a),cy+r*Math.sin(a)]}
+    let grid=''
+    ;[0.33,0.66,1].forEach(f=>{grid+=`<polygon points="${CRIT.map((_,k)=>pt(k,rmax*f).join(',')).join(' ')}" fill="none" stroke="#ffffff12"/>`})
+    const poly = CRIT.map(([k],idx)=>pt(idx,rmax*(c.criteria[k]/100)).join(',')).join(' ')
+    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${grid}
+      <polygon points="${poly}" fill="#00C2A833" stroke="var(--teal2)" stroke-width="2"/></svg>`
+  }
+  function proofFor(c){
+    const f=(c.redFlags[0]||'').toLowerCase()
+    if(/gap|tenure|stint|hop/.test(f)) return c.evidence.tenure
+    if(/skill/.test(f)) return c.evidence.saas
+    if(/not product|background/.test(f)) return c.evidence.leadership
+    return c.evidence.tenure || c.note
+  }
+  function renderCatches(){
+    const notable = R.candidates.filter(c=>c.redFlags.length).sort((a,b)=>b.overallScore-a.overallScore)
+    const seen=new Set(), picks=[]
+    for(const c of notable){ const key=c.redFlags[0].slice(0,10); if(seen.has(key))continue; seen.add(key); picks.push(c); if(picks.length>=3)break }
+    if(!picks.length) return
+    $('catchTitle').style.display=''
+    $('catches').innerHTML = picks.map(c=>`<div class="catch">
+      <div class="h">${c.name} · <span style="color:var(--subtle);font-family:var(--mono);font-size:12px">#${c.rank}, ${c.overallScore}/100</span></div>
+      <div class="flag">⚑ ${c.redFlags[0]}</div>
+      <div class="why">“${proofFor(c)}”</div></div>`).join('')
+  }
+  function evGrid(c){
+    return CRIT.map(([k,n])=>`<div class="ev">
+      <div class="k">${n} <b>${c.criteria[k]}</b></div>
+      <div><div class="track"><i style="width:${c.criteria[k]}%"></i></div>
+        <div class="q">“${(c.evidence&&c.evidence[k])||'—'}”</div></div></div>`).join('')
+  }
+
+  function showResults(){
+    $('scoringView').classList.add('hidden'); $('resultsView').classList.remove('hidden')
+    $('liveLabel').textContent = 'Complete'
+    const c = R.counts, t = fmtTime(R.elapsedMs)
+    $('summary').innerHTML =
+      `<b>${R.total}</b> screened · <b style="color:var(--teal)">${c.shortlist}</b> shortlisted · `+
+      `<b style="color:var(--gold)">${c.hold}</b> held · <b style="color:var(--coral)">${c.reject}</b> rejected`+
+      (t?` · <b>${t}</b>`:'')
+    renderCatches()
+    const top = R.candidates[0]
+    $('spot').innerHTML =
+      `<div style="text-align:center">${radar(top)}</div>
+       <div><div class="role">Top match · rank 1</div><div class="who">${top.name} — ${top.overallScore}/100</div>
+       <div class="bars">${CRIT.map(([k,n])=>`<div class="brow"><div class="t">${n}</div>
+         <div class="track"><i style="width:${top.criteria[k]}%"></i></div><div class="v">${top.criteria[k]}</div></div>`).join('')}</div>
+       <div class="note">${top.note}</div></div>`
+    const rows = R.candidates.map((c,idx)=>{
+      const flags = c.redFlags.map(f=>`<span class="rf">⚑ ${f}</span>`).join('')
+      const ko = !c.eligible ? `<span class="rf">✕ ${c.knockoutReason}</span>` : ''
+      return `<tr class="row" data-i="${idx}" style="animation-delay:${Math.min(idx*20,900)}ms">
+        <td class="rk"><span class="chev">▸</span>${c.rank}</td>
+        <td class="nm">${c.name}</td>
+        <td class="sc">${c.overallScore}<span>/100</span></td>
+        <td class="tier tier${c.tier}">${c.tier}</td>
+        <td><span class="pill p${c.action}">${c.action}</span></td>
+        <td class="note">${c.note}${flags}${ko}</td></tr>
+       <tr class="detail" data-d="${idx}" style="display:none"><td colspan="6"><div class="detailbox">${evGrid(c)}</div></td></tr>`
+    }).join('')
+    const tb=$('tbody'); tb.innerHTML = rows
+    tb.querySelectorAll('tr.row').forEach(tr=>{
+      tr.onclick=()=>{ const d=tb.querySelector('tr.detail[data-d="'+tr.dataset.i+'"]')
+        const open=d.style.display!=='none'; d.style.display=open?'none':''; tr.classList.toggle('open',!open) }
+    })
+    const hrs = Math.round(R.total*6/60*10)/10
+    $('roi').innerHTML =
+      `<div><div class="big">≈ ${hrs} hrs<small>of manual screening replaced — ${R.total} CVs at ~6 min each, done in ${t||'minutes'} instead of a recruiter's afternoon.</small></div></div>
+       <div class="next"><div class="lbl">Next step</div><h3>Interview the top ${c.shortlist||5}</h3>
+         <p>Auto-generate résumé-based questions and an answer guide for your shortlist with the <b style="color:var(--teal2)">Interview Verification Kit</b> — walk into every interview already knowing what to probe.</p></div>`
+  }
+
+  function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600)}
+  function exportCSV(){
+    const head=['Rank','Candidate','Score','Tier','Action','Eligible','Red flags','AI note']
+    const esc=s=>'"'+String(s).replace(/"/g,'""')+'"'
+    const lines=[head.map(esc).join(',')].concat(R.candidates.map(c=>
+      [c.rank,c.name,c.overallScore,c.tier,c.action,c.eligible?'Yes':'No (knockout)',c.redFlags.join('; '),c.note].map(esc).join(',')))
+    const blob=new Blob([lines.join('\n')],{type:'text/csv'}); const url=URL.createObjectURL(blob)
+    const a=document.createElement('a'); a.href=url; a.download='talenfra-shortlist.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+    toast('Shortlist exported — '+R.total+' candidates, ranked & annotated')
+  }
+
+  $('runBtn').onclick = run
+  $('exportBtn').onclick = exportCSV
+  $('replayBtn').onclick = () => { $('resultsView').classList.add('hidden'); $('setup').classList.remove('hidden'); $('liveLabel').textContent='Ready' }
+</script>
+</body>
+</html>
