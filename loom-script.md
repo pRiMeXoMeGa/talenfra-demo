@@ -7,11 +7,11 @@ Role: Senior Product Manager, 47 applicants.
 
 ### 0:00 – 0:10 · Hook (differentiator-first)
 **SCREEN:** Ranked results flash up, then settle on the top of the table — "Senior Product Manager · 47 applicants."
-**VO:** "on an average day your recruiters would spend approximately 5 hours to review 47 applications for one application but using this tool its only a matter of minutes, to get a detailed cleaning of each and every applicant, with scores identifying the best fit. We are not talking about replacing recruiters, but I'm empowering them with something that enhances their capabilities, let's watch, how."
+**VO:** "on an average day your recruiters would spend approximately 5 hours to review 47 applications for one job opening but using this tool its only a matter of minutes, to get a detailed screening of each and every applicant, with scores identifying the best fit. We are not talking about replacing recruiters, but we are empowering them with something that enhances their capabilities, let's watch, how."
 
 ### 0:10 – 0:28 · What it scores against
 **SCREEN:** Point at the rubric chips (SaaS background, domain fit, leadership, communication, tenure) and the knockout rule.
-**VO:** "First we tell it what good looks like for your role — your real criteria, not keywords. Here, five things that matter for a Senior PM, plus one hard rule: at least four years in product."
+**VO:** "First we tell the system what good looks like for your role — which is your real criteria, not just keywords. Here, five things that matter for a Senior PM, plus one hard rule: at least four years in product."
 
 ### 0:28 – 0:48 · Run it
 **SCREEN:** Click **Run screening**. Progress bar fills, shortlist/hold/reject tallies climb.
