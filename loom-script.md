@@ -7,7 +7,7 @@ Role: Senior Product Manager, 47 applicants.
 
 ### 0:00 – 0:10 · Hook (differentiator-first)
 **SCREEN:** Ranked results flash up, then settle on the top of the table — "Senior Product Manager · 47 applicants."
-**VO:** "Every score in this shortlist comes with the exact line from the CV behind it. That's 47 applicants for one role, screened in a couple of minutes. Watch."
+**VO:** "on an average day your recruiters would spend approximately 5 hours to review 47 applications for one application but using this tool its only a matter of minutes, to get a detailed cleaning of each and every applicant, with scores identifying the best fit. We are not talking about replacing recruiters, but I'm empowering them with something that enhances their capabilities, let's watch, how."
 
 ### 0:10 – 0:28 · What it scores against
 **SCREEN:** Point at the rubric chips (SaaS background, domain fit, leadership, communication, tenure) and the knockout rule.
