@@ -1,5 +1,11 @@
 # Talenfra — Live Screening Demo
 
+> **Status (2026-09-17): recorded and live.** The 3:07 screen recording is on talenfra.com (`/demo` and the
+> homepage), self-hosted as an adaptive HLS stream — see the "Demo video" section of
+> `../talenfra-website/README.md`. The original recording is kept here in `recordings/` (the site only
+> ships the converted stream). To replace it, record again, drop the MP4 in `recordings/`, and follow the
+> re-encode steps in the website README.
+
 A self-contained demo you can screen-record for the site's Loom slot. It runs a **real
 Claude screening pass** over 47 synthetic Senior Product Manager CVs against a rubric, then
 plays the run back on an on-brand web page: progress → live tallies → ranked shortlist with
@@ -13,6 +19,7 @@ Everything is fictional/synthetic — no real candidates or personal data.
 - `score.mjs` — scores every candidate and writes `results.js`. No dependencies (uses `fetch`).
 - `index.html` — the animated page you record. Open it directly in a browser.
 - `results.js` — generated data the page plays back (git-ignore / don't hand-edit).
+- `recordings/` — the source screen recording(s) of the demo (large; not part of the website build).
 
 ## Preview right now (no key needed)
 ```bash
